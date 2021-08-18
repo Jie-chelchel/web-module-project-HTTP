@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Link, useParams, useHistory } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 import axios from "axios";
 import DeleteMovieModal from "./DeleteMovieModal";
 
 const Movie = (props) => {
   const { addToFavorites, deleteMovie } = props;
-  console.log(props.movies);
   const [movie, setMovie] = useState("");
   const [isShowingModal, setIsShowingModal] = useState(false);
 
   const { id } = useParams();
-  const { push } = useHistory();
 
   useEffect(() => {
     axios
@@ -25,13 +23,22 @@ const Movie = (props) => {
   }, [id]);
 
   const modalHandler = () => {
-    setIsShowingModal(true);
+    setIsShowingModal(!isShowingModal);
+  };
+
+  const favoriteHandler = () => {
+    addToFavorites(movie);
   };
   return (
     <div className="modal-page col">
       <div className="modal-dialog">
         <div className="modal-content">
-          {isShowingModal && <DeleteMovieModal deleteMovie={deleteMovie} />}
+          {isShowingModal && (
+            <DeleteMovieModal
+              deleteMovie={deleteMovie}
+              modalHandler={modalHandler}
+            />
+          )}
 
           <div className="modal-header">
             <h4 className="modal-title">{movie.title} Details</h4>
@@ -68,7 +75,9 @@ const Movie = (props) => {
               </section>
 
               <section>
-                <span className="m-2 btn btn-dark">Favorite</span>
+                <span onClick={favoriteHandler} className="m-2 btn btn-dark">
+                  Favorite
+                </span>
                 <Link
                   to={`/movies/edit/${movie.id}`}
                   className="m-2 btn btn-success"

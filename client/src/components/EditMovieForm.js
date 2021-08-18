@@ -7,7 +7,6 @@ import axios from "axios";
 const EditMovieForm = (props) => {
   const { push } = useHistory();
   const { id } = useParams();
-  console.log(id);
 
   const [movie, setMovie] = useState({
     title: "",
@@ -24,7 +23,7 @@ const EditMovieForm = (props) => {
         setMovie(res.data);
       })
       .catch((err) => console.log(err));
-  }, []);
+  }, [id]);
 
   const handleChange = (e) => {
     setMovie({

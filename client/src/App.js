@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Route, Switch, Redirect, useHistory } from "react-router-dom";
+import { Route, Switch, Redirect } from "react-router-dom";
 import MovieList from "./components/MovieList";
 import Movie from "./components/Movie";
 
@@ -9,15 +9,12 @@ import MovieHeader from "./components/MovieHeader";
 import EditMovieForm from "./components/EditMovieForm";
 import FavoriteMovieList from "./components/FavoriteMovieList";
 import AddMovieForm from "./components/AddMovieFrom";
-import DeleteMovieModal from "./components/DeleteMovieModal";
 
 import axios from "axios";
 
 const App = (props) => {
   const [movies, setMovies] = useState([]);
   const [favoriteMovies, setFavoriteMovies] = useState([]);
-  const { push } = useHistory();
-
   useEffect(() => {
     axios
       .get("http://localhost:5000/api/movies")
@@ -36,15 +33,27 @@ const App = (props) => {
         const updatedMovieList = movies.filter((movie) => {
           return movie.id !== res.data;
         });
+        const updatedFavoriteMovieList = favoriteMovies.filter((movie) => {
+          return movie.id !== res.data;
+        });
         setMovies(updatedMovieList);
+        setFavoriteMovies(updatedFavoriteMovieList);
       })
       .catch((err) => {
         console.log(err.response);
       });
   };
 
-  const addToFavorites = (movie) => {};
+  const addToFavorites = (movie) => {
+    const findMovie = favoriteMovies.find(({ title }) => title === movie.title);
+    if (findMovie) {
+      return alert("Already added to your favorite movie list");
+    }
 
+    setFavoriteMovies([...favoriteMovies, movie]);
+  };
+
+  console.log(movies);
   return (
     <div>
       <nav className="navbar navbar-dark bg-dark">
@@ -65,11 +74,15 @@ const App = (props) => {
             </Route>
 
             <Route path="/movies/:id">
-              <Movie movies={movies} deleteMovie={deleteMovie} />
+              <Movie
+                movies={movies}
+                deleteMovie={deleteMovie}
+                addToFavorites={addToFavorites}
+              />
             </Route>
 
             <Route path="/movies">
-              <MovieList movies={movies} deleteM />
+              <MovieList movies={movies} />
             </Route>
             <Route path="/addmovies">
               <AddMovieForm setMovies={setMovies} />

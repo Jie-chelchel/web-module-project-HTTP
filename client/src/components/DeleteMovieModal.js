@@ -4,10 +4,13 @@ import { useHistory, useParams } from "react-router-dom";
 const DeleteMovieModal = (props) => {
   const { id } = useParams();
   const { push } = useHistory();
-  console.log(id);
   const deleteHandler = () => {
     props.deleteMovie(id);
-    push("/");
+    push("/movies");
+  };
+
+  const cancelHandler = () => {
+    props.modalHandler();
   };
   return (
     <div id="deleteMovieModal">
@@ -17,6 +20,7 @@ const DeleteMovieModal = (props) => {
             <div className="modal-header">
               <h4 className="modal-title">Delete Movie</h4>
               <button
+                onClick={cancelHandler}
                 type="button"
                 className="close"
                 data-dismiss="modal"
@@ -33,6 +37,7 @@ const DeleteMovieModal = (props) => {
             </div>
             <div className="modal-footer">
               <input
+                onClick={cancelHandler}
                 type="button"
                 className="btn btn-default"
                 data-dismiss="modal"
